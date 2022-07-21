@@ -3,29 +3,41 @@
   windows_subsystem = "windows"
 )]
 
-use git2::{Repository, BranchType};
+mod branch;
+
+use branch::Branch;
+use git2::Repository;
+use tauri::State;
+use std::sync::Mutex;
 
 #[tauri::command]
-fn branch_locals() -> Vec<String> {
-  let repo = Repository::open("/home/valerauko/Projects/climbing").unwrap();
-  repo.branches(Some(BranchType::Local)).unwrap().fold(vec![], |mut aggr, branch| match branch {
-    Ok((branch, _)) => {
-      aggr.push(match branch.name().unwrap() {
-        Some(name) => name.to_string(),
-        None => "<no name>".into(),
-      });
-      aggr
-    }
+fn branch_locals(state: State<Mutex<Option<Repository>>>) -> Vec<Branch> {
+  match &*state.inner().lock().expect("Could not lock mutex") {
+    Some(repo) => Branch::locals(repo),
+    None => vec![]
+  }
+}
+
+#[tauri::command]
+fn open_repo(path: String, state: State<Mutex<Option<Repository>>>) -> Result<String, String> {
+  match Repository::open(&path) {
+    Ok(repo) => {
+      let mut state = state.lock().expect("Could not lock mutex");
+      *state = Some(repo);
+      Ok(path)
+    },
     Err(e) => {
       println!("{}", e);
-      aggr
+      Err(e.message().into())
     }
-  })
+  }
 }
 
 fn main() {
+  let repo: Mutex<Option<Repository>> = Mutex::new(None);
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![branch_locals])
+    .manage(repo)
+    .invoke_handler(tauri::generate_handler![open_repo, branch_locals])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

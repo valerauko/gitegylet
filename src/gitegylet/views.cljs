@@ -1,22 +1,17 @@
 (ns gitegylet.views
   (:require
    [re-frame.core :as rf]
-   [re-com.core :as re-com :refer [at]]
-   [gitegylet.config :as config]
-   [gitegylet.subs :as subs]
-   ))
-
-(defn title []
-  (let [name (rf/subscribe [::subs/name])]
-    [re-com/title
-     :src   (at)
-     :label (str "Hello from " @name". Git version " config/version)
-     :level :level1]))
+   [gitegylet.events :as events]
+   [gitegylet.subs :as subs]))
 
 (defn main-panel []
   (let [branches @(rf/subscribe [::subs/branches])]
-    [re-com/v-box
-     :src      (at)
-     :height   "100%"
-     :children [[title]
-                [:ul (map (fn [b] [:li {:key (gensym)} b]) branches)]]]))
+    [:div {:id "main"}
+     [:nav {:id "topbar"}
+      [:button
+       {:on-click #(rf/dispatch [::events/show-repo-dialog])
+        :title "Open repo"}
+       "\uf07c"]]
+     [:div {:id "flex"}
+      [:ul
+       (map (fn [branch] [:li {:key (gensym)} (get branch "name")]) branches)]]]))
