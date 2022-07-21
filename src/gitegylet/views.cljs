@@ -14,8 +14,9 @@
      :level :level1]))
 
 (defn main-panel []
-  [re-com/v-box
-    :src      (at)
-    :height   "100%"
-    :children [[title]
-              ]])
+  (let [branches @(rf/subscribe [::subs/branches])]
+    [re-com/v-box
+     :src      (at)
+     :height   "100%"
+     :children [[title]
+                [:ul (map (fn [b] [:li {:key (gensym)} b]) branches)]]]))
