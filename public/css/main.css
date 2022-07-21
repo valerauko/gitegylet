@@ -1,0 +1,323 @@
+@font-face {
+  font-family: "FontAwesome";
+  src: url("fa5.otf");
+}
+
+body {
+  background: #1a1d21;
+  color: #ccc;
+  font-family: sans-serif;
+  user-select: none;
+  margin: 0;
+  overflow: hidden;
+}
+
+* {
+  min-width: 0;
+}
+
+#main {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  flex-flow: column nowrap;
+}
+
+#topbar {
+  display: flex;
+  justify-content: center;
+  padding: .5em;
+}
+
+#topbar button {
+  font-family: "FontAwesome";
+  display: block;
+  font-size: 16px;
+  width: 2em;
+  height: 2em;
+  background: inherit;
+  color: inherit;
+  border: 1px solid #483f1c;
+  border-radius: 0;
+}
+
+#topbar button:hover {
+  background: #483f1c;
+}
+
+#topbar button + button {
+  margin-left: .5em;
+}
+
+#flex {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-flow: row nowrap;
+}
+
+.branches {
+  min-width: 200px;
+  max-width: 260px;
+  width: 260px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  margin-right: .5em;
+}
+
+.branches ol, .branches li {
+  list-style: none outside none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.branches span.label {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  height: 2em;
+}
+
+.branches span.name {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0;
+  margin: 0;
+}
+
+.branches ol li.folder > span.label > span.name::before {
+  padding-right: .5em;
+}
+
+.branches ol > li.folder > span.label > span.name::before {
+  padding-left: 1.5em;
+}
+
+.branches ol ol li.folder > span.label > span.name::before {
+  padding-left: 3em;
+}
+
+.branches ol ol ol li.folder > span.label > span.name::before {
+  padding-left: 4.5em;
+}
+
+.branches ol ol ol ol li.folder > span.label > span.name::before {
+  padding-left: 6em;
+}
+
+.branches ol ol li.leaf > span.label > span.name::before {
+  padding-left: 1.5em;
+}
+
+.branches ol ol ol li.leaf > span.label > span.name::before {
+  padding-left: 3em;
+}
+
+.branches ol ol ol ol li.leaf > span.label > span.name::before {
+  padding-left: 4.5em;
+}
+
+.branches li.head {
+  background: #ffc806;
+  color: #27271f;
+}
+
+.branches li.local:hover {
+  background: #483f1c;
+}
+
+.branches span::before, .branches span.visibility-toggle {
+  font-family: "FontAwesome";
+}
+
+.branches span.visibility-toggle, .branches span.name::before {
+  font-size: .8em;
+  display: inline-block;
+  width: 1.5em;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.branches li ol span.name::before {
+  padding-right: .5em;
+}
+
+.branches li.closed > span.label > span.name::before {
+  content: "\f054"; /* chevron */
+}
+
+.branches li.closed ol, .branches li.closed li {
+  display: none;
+}
+
+.branches li.expanded > span.label > span.name::before {
+  content: "\f078"; /* chevron */
+}
+
+.branches li.leaf span.name::before {
+  content: "\f126"; /* branch */
+}
+
+.branches li.expanded ol {
+  display: block;
+}
+
+.branches span.visibility-toggle {
+  visibility: hidden;
+  padding: .5em .1em;
+  cursor: pointer;
+}
+
+.branches li:hover > span.label > span.visibility-toggle {
+  visibility: visible;
+}
+
+.branches li.hidden {
+  opacity: .5;
+}
+
+.branches span.ab {
+  flex: 1 0 auto;
+  text-align: right;
+  padding-right: .5em;
+}
+
+.branches span.ahead, .branches span.behind {
+  padding-left: .25em;
+}
+
+.branches span.ahead::before {
+  content: "\f0de";
+  padding-right: .1em;
+}
+
+.branches span.behind::before {
+  content: "\f0dd";
+  padding-right: .1em;
+}
+
+.commits {
+  display: flex;
+  flex-flow: row nowrap;
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+  width: .5em;
+  height: .5em;
+}
+
+:hover::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+:hover::-webkit-scrollbar-thumb {
+  background: #483f1c;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #ffc806;
+}
+
+.commits svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.commits ol {
+  flex: 1 1 100%;
+  min-width: 300px;
+  height: max-content;
+}
+
+.commits ol, .commits li {
+  list-style: none outside none;
+  margin: 0;
+  padding: 0;
+}
+
+.commits li {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  height: 2em;
+}
+
+.commits li.selected {
+  background: #ffc806;
+  color: #27271f;
+  position: sticky;
+  top: 0;
+}
+
+.commits li:not(.selected):hover {
+  background: #483f1c;
+}
+
+.commits li .branch-label {
+  min-width: auto;
+  flex: 0 0 max-content;
+  white-space: nowrap;
+  display: block;
+  padding: 0.2em 0.3em;
+  border: 1px solid #483f1c;
+}
+
+.branch-label + .branch-label {
+  margin-left: 0.4em;
+}
+
+.commits li .branch-label.head {
+  background: #ffc806;
+  color: #27271f;
+}
+
+.commits li .message {
+  padding: 0 0.5em;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.commits span.status {
+  font-family: "FontAwesome";
+  display: inline-block;
+}
+
+.commits span.status {
+  margin-left: .5em;
+}
+
+dialog {
+  background: #1a1d21;
+  color: #ccc;
+  border: none;
+  padding: 0;
+  min-width: auto;
+}
+
+dialog div {
+  padding: 1em;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#selected-commit-pane {
+  width: 350px;
+}

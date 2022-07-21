@@ -1,21 +1,45 @@
-{:builds
- {:app {:asset-path "/js"
-        :modules {:main {:init-fn app.core/main}}
-        :output-dir "public/js"
-        :target :browser}
-  :cards {:asset-path "/js"
-          :modules {:main {:init-fn app.cards/main}}
-          :compiler-options {:devcards true}
-          :output-dir "public/js"
-          :target :browser}
-  :test {:ns-regexp "app.cards"
-         :output-to "out/test.js"
-         :target :node-test}
-  :e2e {:ns-regexp "e2e.*"
-        :output-to "out/e2e.js"
-        :target :node-test}}
- :dependencies [[reagent "0.8.1"]
-                [devcards "0.2.6"]]
- :dev-http {3000 "public"}
- :nrepl {:port 3333}
- :source-paths ["src"]}
+{:nrepl {:port 8777}
+
+ :source-paths ["src" "test"]
+
+ :dependencies
+ [[reagent "1.1.1"]
+  [re-frame "1.2.0"]
+  [re-com "2.13.2"]
+
+  [binaryage/devtools "1.0.6"]
+  [day8/shadow-git-inject "0.0.5"]
+  [clj-kondo "2022.06.22"]]
+
+ :build-defaults
+ {:build-hooks [(shadow-git-inject.core/hook)]}
+
+ :dev-http
+ {8280 "public"
+  8290 "target/browser-test"}
+
+ :builds
+ {:app
+  {:target     :browser
+   :output-dir "public/js"
+   :asset-path "/js"
+   :modules
+   {:app {:init-fn gitegylet.core/init}}
+   :compiler-options
+   {:closure-defines
+    {gitegylet.config/version :shadow-git-inject/version}}
+   :devtools
+   {:preloads []}
+   :dev
+   {:compiler-options
+    {:closure-defines
+     {re-com.config/root-url-for-compiler-output "http://localhost:8290/js/compiled/app/cljs-runtime/"}}}}
+  :browser-test
+  {:target    :browser-test
+   :ns-regexp "-test$"
+   :runner-ns shadow.test.browser
+   :test-dir  "target/browser-test"}
+  :karma-test
+  {:target    :karma
+   :ns-regexp "-test$"
+   :output-to "target/karma-test.js"}}}
