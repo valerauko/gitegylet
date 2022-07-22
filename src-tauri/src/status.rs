@@ -9,7 +9,9 @@ pub struct Status {
 impl Status {
     pub fn all(repo: &git2::Repository) -> Vec<Self> {
         let mut opts = git2::StatusOptions::new();
-        opts.include_ignored(false).include_untracked(true);
+        opts.include_ignored(false)
+            .include_untracked(true)
+            .recurse_untracked_dirs(true);
 
         repo.statuses(Some(&mut opts))
             .unwrap()
