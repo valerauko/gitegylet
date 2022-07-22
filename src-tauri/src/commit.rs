@@ -58,7 +58,7 @@ impl Commit {
             return commits;
         }
 
-        while commits.len() < 250 {
+        while commits.len() < 100 {
             match heap.pop() {
                 Some(commit) => {
                     for parent_id in &commit.parents {
