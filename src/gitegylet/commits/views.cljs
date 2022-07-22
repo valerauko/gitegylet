@@ -204,7 +204,6 @@
                   (let [relevant-branches (get indexed-branches (:id commit))]
                     [:li
                      {:key (gensym)
-                      ;; :on-context-menu commit-menu
                       :on-click #(rf/dispatch [::events/toggle-select commit])
                       :class [(when (= (:id commit) selected-id)
                                 "selected")]}
@@ -223,7 +222,21 @@
                        :id (:id commit)
                        :class ["message"]
                        :title (:id commit)}
-                      (:summary commit)]])))
+                      (:summary commit)] 
+                     [:div
+                      {:class ["buttons"]}
+                      ;; buttons (or context menu):
+                      ;; create branch, amend, cherry pick, revert, reset current branch
+                      [:button
+                       {:key (gensym)
+                        :title "Create branch here"
+                        :on-click (fn [e]
+                                    (js/alert "hello")
+                                    (.stopPropagation e))}
+                       "\uf126"]]])))
+                      ;; [:button {:key (gensym) :disabled true :title "Amend"} "\uf044"]
+                      ;; [:button {:key (gensym) :disabled true :title "Cherry pick"} "\uf25a"]
+                      
                commits))]))
 
 (defn modified-tree

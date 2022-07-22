@@ -300,6 +300,27 @@ body {
   margin-left: .5em;
 }
 
+.commits li div.buttons {
+  margin-left: auto;
+  display: none;
+}
+
+.commits li:hover div.buttons {
+  display: flex;
+  flex-flow: row nowrap;
+  flex: 0 0 max-content;
+}
+
+.commits li div.buttons button {
+  background: none;
+  border: none;
+  color: inherit;
+  width: 2em;
+  height: 2em;
+  margin-left: .5em;
+  cursor: pointer;
+}
+
 dialog {
   background: #1a1d21;
   color: #ccc;
