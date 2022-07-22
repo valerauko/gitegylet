@@ -30,9 +30,9 @@
   []
   (let [commits @(rf/subscribe [::subs/commits])
         head @(rf/subscribe [::subs/head])
-        selected-id @(rf/subscribe [::subs/selected])
+        selected-id (:id @(rf/subscribe [::subs/selected]))
         statuses @(rf/subscribe [::repo/statuses])
-        branches @(rf/subscribe [::branches/names-selected])
+        branches @(rf/subscribe [::branches/selected])
         indexed-branches (group-by :commit-id branches)]
     [:div {:class "commits"}
      (let [ordered-ids (into (if (empty? statuses) [] [:dirty])
@@ -205,8 +205,7 @@
                     [:li
                      {:key (gensym)
                       ;; :on-context-menu commit-menu
-                      :on-click #(rf/dispatch [::events/toggle-select
-                                               (:id commit)])
+                      :on-click #(rf/dispatch [::events/toggle-select commit])
                       :class [(when (= (:id commit) selected-id)
                                 "selected")]}
                      (some->> relevant-branches
@@ -226,3 +225,35 @@
                        :title (:id commit)}
                       (:summary commit)]])))
                commits))]))
+
+(defn modified-tree
+  [statuses]
+  [:ol
+   (map
+    (fn [{:keys [file status]}]
+      [:li {:key (gensym)} (str file ": " status)])
+    statuses)])
+
+(defn selected-commit-pane
+  []
+  [:div
+   {:id "selected-commit-pane"}
+   (if-let [commit @(rf/subscribe [::subs/selected])]
+     (let [statuses @(rf/subscribe [::subs/diff-files (:id commit)])]
+       [:div
+        [:p
+         (:summary commit)
+         [:br]
+         (-> commit :message (split #"[\n\r]+") rest)
+         [:br]
+         (:id commit)]
+        [:p
+         (:name (:author commit))
+         [:br]
+         (->> (:time commit)
+              (* 1000)
+              (new js/Date)
+              (.toISOString))]
+        (modified-tree statuses)])
+     (let [statuses @(rf/subscribe [::repo/statuses])]
+       (modified-tree statuses)))])

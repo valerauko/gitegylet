@@ -15,3 +15,8 @@
  ::selected
  (fn [{:keys [selected-commit]}]
    selected-commit))
+
+(rf/reg-sub
+ ::diff-files
+ (fn [db [_ commit-id]]
+   (get-in db [:diff-files commit-id])))
