@@ -1,7 +1,7 @@
 {
   "name": "gitegylet",
   "version": "0.1.0",
-  "private": true,
+  "license": "AGPL-3.0-or-later",
   "scripts": {
     "start": "shadow-cljs watch app browser-test karma-test",
     "build": "yarn clean && shadow-cljs release app",
