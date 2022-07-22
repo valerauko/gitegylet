@@ -24,12 +24,15 @@
 ;;    (let [branches (map branch->map (.fetch git repo (clj->js names)))]
 ;;      {:dispatch [::reload]})))
 
-;; (rf/reg-event-fx
-;;  ::checkout
-;;  (fn [{{:keys [repo]} :db} [_ name]]
-;;    (.checkoutBranch git repo name)
-;;    {::fx/tauri [["branch_locals"] ::load-branches]
-;;     :dispatch [::commits/reload-head]}))
+(rf/reg-event-fx
+ ::checkout-success
+ (fn [_ _]
+   {::fx/tauri [["branch_locals"] ::load-branches]}))
+
+(rf/reg-event-fx
+ ::checkout
+ (fn [_ [_ name]]
+   {::fx/tauri [["checkout_branch" {:name name}] ::checkout-success]}))
 
 (rf/reg-event-fx
  ::toggle-selection

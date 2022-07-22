@@ -24,6 +24,14 @@ async fn branch_locals(state: State<'_, Mutex<Option<Repository>>>) -> Result<Ve
 }
 
 #[tauri::command]
+async fn checkout_branch(name: String, state: State<'_, Mutex<Option<Repository>>>) -> Result<Branch, String> {
+  match &*state.inner().lock().expect("Could not lock mutex") {
+    Some(repo) => Branch::by_name(repo, &name)?.checkout(repo),
+    None => Err("No open repo".to_string())
+  }
+}
+
+#[tauri::command]
 async fn statuses(state: State<'_, Mutex<Option<Repository>>>) -> Result<Vec<Status>, String> {
   match &*state.inner().lock().expect("Could not lock mutex") {
     Some(repo) => Ok(Status::all(repo)),
@@ -84,6 +92,7 @@ fn main() {
       commits,
       head,
       commit_diff,
+      checkout_branch,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

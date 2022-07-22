@@ -52,6 +52,14 @@ impl Branch {
         })
     }
 
+    pub fn by_name(repo: &git2::Repository, name: &str) -> Result<Self, String> {
+        let branch = repo.find_branch(name, git2::BranchType::Local).unwrap();
+        match Self::from_git2(repo, branch) {
+            Ok(branch) => Ok(branch),
+            Err(e) => Err(e.message().to_string())
+        }
+    }
+
     pub fn locals(repo: &git2::Repository) -> Vec<Self> {
         let branches = repo.branches(Some(git2::BranchType::Local)).unwrap();
         branches.fold(vec![], |mut aggr, branch| match branch {
@@ -70,5 +78,19 @@ impl Branch {
                 aggr
             }
         })
+    }
+
+    pub fn checkout(self, repo: &git2::Repository) -> Result<Self, String> {
+        match repo.set_head(&self.refname) {
+            Ok(_) => {
+                let mut options = git2::build::CheckoutBuilder::default();
+                options.force();
+                match repo.checkout_head(Some(&mut options)) {
+                    Ok(_) => Ok(self),
+                    Err(e) => Err(e.message().to_string()),
+                }
+            }
+            Err(e) => Err(e.message().to_string()),
+        }
     }
 }
