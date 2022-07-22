@@ -8,6 +8,8 @@ body {
   color: #ccc;
   font-family: sans-serif;
   user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
   margin: 0;
   overflow: hidden;
 }
