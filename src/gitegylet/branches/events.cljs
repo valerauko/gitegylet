@@ -1,12 +1,16 @@
 (ns gitegylet.branches.events
   (:require [re-frame.core :as rf]
             [gitegylet.effects :as fx]
+            [gitegylet.commits.events :as commits]
             [gitegylet.branches.db :refer [branch->map]]))
 
 (rf/reg-event-fx
  ::load-branches
  (fn [{:keys [db]} [_ branches]]
-   {:db (assoc db :local-branches (map branch->map branches))}))
+   (let [converted (map branch->map branches)
+         names (map :full-name converted)]
+     {:db (assoc db :local-branches converted)
+      ::fx/tauri [["commits" {:branches names}] ::commits/load-commits]})))
 
 ;; (rf/reg-event-fx
 ;;  ::create
@@ -30,9 +34,10 @@
 (rf/reg-event-fx
  ::toggle-selection
  (fn [{:keys [db]} [_ name selected selected?]]
-   (let [f (if selected? conj disj)]
-     {:db (assoc db :branches-selected (f selected name))})))
-      ;; :dispatch [::commits/reload]})))
+   (let [f (if selected? conj disj)
+         names (f selected name)]
+     {:db (assoc db :branches-selected names)
+      ::fx/tauri [["commits" {:branches names}] ::commits/load-commits]})))
 
 (rf/reg-event-db
  ::toggle-expansion
