@@ -2,6 +2,7 @@
   (:require
    [re-frame.core :as rf]
    [gitegylet.branches.views :refer [branches]]
+   [gitegylet.commits.views :refer [commits]]
    [gitegylet.repo.subs]
    [gitegylet.repo.events]))
 
@@ -15,6 +16,7 @@
        "\uf07c"]]
      [:div {:id "flex"}
       (branches)
+      (commits)
       (reduce
        (fn [dl status]
          (-> dl
