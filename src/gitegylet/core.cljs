@@ -4,9 +4,7 @@
    [re-frame.core :as re-frame]
    [gitegylet.events :as events]
    [gitegylet.views :as views]
-   [gitegylet.config :as config]
-   ))
-
+   [gitegylet.config :as config]))
 
 (defn dev-setup []
   (when config/debug?
@@ -22,4 +20,3 @@
   (re-frame/dispatch-sync [::events/initialize-db])
   (dev-setup)
   (mount-root))
-4
