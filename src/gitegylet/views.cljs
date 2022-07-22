@@ -1,13 +1,12 @@
 (ns gitegylet.views
   (:require
    [re-frame.core :as rf]
-   [gitegylet.subs :as subs]
+   [gitegylet.branches.views :refer [branches]]
    [gitegylet.repo.subs]
    [gitegylet.repo.events]))
 
 (defn main-panel []
-  (let [branches @(rf/subscribe [::subs/branches])
-        statuses @(rf/subscribe [:gitegylet.repo.subs/statuses])]
+  (let [statuses @(rf/subscribe [:gitegylet.repo.subs/statuses])]
     [:div {:id "main"}
      [:nav {:id "topbar"}
       [:button
@@ -15,8 +14,7 @@
         :title "Open repo"}
        "\uf07c"]]
      [:div {:id "flex"}
-      [:ul
-       (map (fn [branch] [:li {:key (gensym)} (get branch "name")]) branches)]
+      (branches)
       (reduce
        (fn [dl status]
          (-> dl

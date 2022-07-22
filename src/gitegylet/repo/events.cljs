@@ -2,7 +2,8 @@
   (:require [re-frame.core :as rf]
             [gitegylet.repo.db :refer [status->map]]
             [gitegylet.effects :as fx]
-            ["@tauri-apps/api/dialog" :as dialog]))
+            ["@tauri-apps/api/dialog" :as dialog]
+            [gitegylet.branches.events :as branch]))
 
 (rf/reg-event-db
  ::update-statuses
@@ -19,7 +20,7 @@
  ::load-repo
  (fn [{:keys [db]} [_ result]]
    {:db (assoc db :repo result)
-    ::fx/tauri [["branch_locals"] :gitegylet.events/load-branches]
+    ::fx/tauri [["branch_locals"] ::branch/load-branches]
     ::fx/interval {:action :start
                    :id :status-poll
                    :freq 2000
