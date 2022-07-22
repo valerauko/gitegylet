@@ -18,8 +18,9 @@
 
 (rf/reg-event-fx
  ::load-repo
- (fn [{:keys [db]} [_ result]]
-   {:db (assoc db :repo result)
+ ;; discards current app-db on successful repo open
+ (fn [_ [_ result]]
+   {:db {:repo result}
     ::fx/tauri [["branch_locals"] ::branch/load-branches]
     ::fx/interval {:action :start
                    :id :status-poll
