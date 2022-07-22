@@ -5,9 +5,12 @@
 
 mod branch;
 mod status;
+mod commit;
 
 use branch::Branch;
 use status::Status;
+use commit::Commit;
+
 use git2::Repository;
 use tauri::State;
 use std::sync::Mutex;
@@ -24,6 +27,14 @@ async fn branch_locals(state: State<'_, Mutex<Option<Repository>>>) -> Result<Ve
 async fn statuses(state: State<'_, Mutex<Option<Repository>>>) -> Result<Vec<Status>, String> {
   match &*state.inner().lock().expect("Could not lock mutex") {
     Some(repo) => Ok(Status::all(repo)),
+    None => Ok(vec![])
+  }
+}
+
+#[tauri::command]
+async fn commits(branches: Vec<String>, state: State<'_, Mutex<Option<Repository>>>) -> Result<Vec<Commit>, String> {
+  match &*state.inner().lock().expect("Could not lock mutex") {
+    Some(repo) => Ok(Commit::listed(repo, branches)),
     None => Ok(vec![])
   }
 }
@@ -51,6 +62,7 @@ fn main() {
       open_repo,
       branch_locals,
       statuses,
+      commits,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
