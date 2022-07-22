@@ -259,8 +259,6 @@ body {
 .commits li.selected {
   background: #ffc806;
   color: #27271f;
-  position: sticky;
-  top: 0;
 }
 
 .commits li:not(.selected):hover {
