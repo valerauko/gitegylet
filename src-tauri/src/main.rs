@@ -4,8 +4,10 @@
 )]
 
 mod branch;
+mod status;
 
 use branch::Branch;
+use status::Status;
 use git2::Repository;
 use tauri::State;
 use std::sync::Mutex;
@@ -14,6 +16,14 @@ use std::sync::Mutex;
 fn branch_locals(state: State<Mutex<Option<Repository>>>) -> Vec<Branch> {
   match &*state.inner().lock().expect("Could not lock mutex") {
     Some(repo) => Branch::locals(repo),
+    None => vec![]
+  }
+}
+
+#[tauri::command]
+fn statuses(state: State<Mutex<Option<Repository>>>) -> Vec<Status> {
+  match &*state.inner().lock().expect("Could not lock mutex") {
+    Some(repo) => Status::all(repo),
     None => vec![]
   }
 }
@@ -37,7 +47,11 @@ fn main() {
   let repo: Mutex<Option<Repository>> = Mutex::new(None);
   tauri::Builder::default()
     .manage(repo)
-    .invoke_handler(tauri::generate_handler![open_repo, branch_locals])
+    .invoke_handler(tauri::generate_handler![
+      open_repo,
+      branch_locals,
+      statuses,
+    ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
