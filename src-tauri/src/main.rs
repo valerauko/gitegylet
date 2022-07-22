@@ -19,7 +19,7 @@ use std::sync::Mutex;
 async fn branch_locals(state: State<'_, Mutex<Option<Repository>>>) -> Result<Vec<Branch>, String> {
   match &*state.inner().lock().expect("Could not lock mutex") {
     Some(repo) => Ok(Branch::locals(repo)),
-    None => Ok(vec![])
+    None => Err("No open repo".to_string())
   }
 }
 
@@ -27,7 +27,7 @@ async fn branch_locals(state: State<'_, Mutex<Option<Repository>>>) -> Result<Ve
 async fn statuses(state: State<'_, Mutex<Option<Repository>>>) -> Result<Vec<Status>, String> {
   match &*state.inner().lock().expect("Could not lock mutex") {
     Some(repo) => Ok(Status::all(repo)),
-    None => Ok(vec![])
+    None => Err("No open repo".to_string())
   }
 }
 
@@ -35,7 +35,18 @@ async fn statuses(state: State<'_, Mutex<Option<Repository>>>) -> Result<Vec<Sta
 async fn commits(branches: Vec<String>, state: State<'_, Mutex<Option<Repository>>>) -> Result<Vec<Commit>, String> {
   match &*state.inner().lock().expect("Could not lock mutex") {
     Some(repo) => Ok(Commit::listed(repo, branches)),
-    None => Ok(vec![])
+    None => Err("No open repo".to_string())
+  }
+}
+
+#[tauri::command]
+async fn head(state: State<'_, Mutex<Option<Repository>>>) -> Result<Commit, String> {
+  match &*state.inner().lock().expect("Could not lock mutex") {
+    Some(repo) => {
+      let head = repo.head().unwrap().peel_to_commit().unwrap();
+      Ok(Commit::from_git2(head))
+    },
+    None => Err("No open repo".to_string())
   }
 }
 
@@ -63,6 +74,7 @@ fn main() {
       branch_locals,
       statuses,
       commits,
+      head,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
