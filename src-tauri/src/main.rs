@@ -32,6 +32,14 @@ async fn statuses(state: State<'_, Mutex<Option<Repository>>>) -> Result<Vec<Sta
 }
 
 #[tauri::command]
+async fn commit_diff(id: String, state: State<'_, Mutex<Option<Repository>>>) -> Result<Vec<Status>, String> {
+  match &*state.inner().lock().expect("Could not lock mutex") {
+    Some(repo) => Ok(Commit::diff_files(repo, id)),
+    None => Err("No open repo".to_string())
+  }
+}
+
+#[tauri::command]
 async fn commits(branches: Vec<String>, state: State<'_, Mutex<Option<Repository>>>) -> Result<Vec<Commit>, String> {
   match &*state.inner().lock().expect("Could not lock mutex") {
     Some(repo) => Ok(Commit::listed(repo, branches)),
@@ -75,6 +83,7 @@ fn main() {
       statuses,
       commits,
       head,
+      commit_diff,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

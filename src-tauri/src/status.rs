@@ -7,6 +7,10 @@ pub struct Status {
 }
 
 impl Status {
+    pub fn from_strings(file: String, status: String) -> Self {
+        Self { file, status }
+    }
+
     pub fn all(repo: &git2::Repository) -> Vec<Self> {
         let mut opts = git2::StatusOptions::new();
         opts.include_ignored(false)
