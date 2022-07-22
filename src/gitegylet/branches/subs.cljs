@@ -21,6 +21,16 @@
    (:branches-selected db)))
 
 (rf/reg-sub
+ ::selected
+ :<- [::locals]
+ :<- [::-selected]
+ (fn [[branches selected] _]
+   (let [selected-filter (if (empty? selected)
+                           (constantly true)
+                           (into #{} selected))]
+     (filter #(some-> % :full-name (selected-filter)) branches))))
+
+(rf/reg-sub
  ; use the branches-selected key in the db if present else select every branch
  ::names-selected
  :<- [::names]
