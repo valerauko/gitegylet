@@ -10,7 +10,11 @@
    (let [converted (map branch->map branches)
          names (map :full-name converted)]
      {:db (assoc db :local-branches converted)
-      ::fx/tauri [["commits" {:branches names}] ::commits/load-commits]})))
+      ::fx/tauri [{:command "commits"
+                   :args {:branches names}
+                   :success ::commits/load-commits}
+                  {:command "head"
+                   :success ::commits/load-head}]})))
 
 ;; (rf/reg-event-fx
 ;;  ::create
@@ -27,12 +31,15 @@
 (rf/reg-event-fx
  ::checkout-success
  (fn [_ _]
-   {::fx/tauri [["branch_locals"] ::load-branches]}))
+   {::fx/tauri {:command "branch_locals"
+                :success ::load-branches}}))
 
 (rf/reg-event-fx
  ::checkout
  (fn [_ [_ name]]
-   {::fx/tauri [["checkout_branch" {:name name}] ::checkout-success]}))
+   {::fx/tauri {:command "checkout_branch"
+                :args {:name name}
+                :success ::checkout-success}}))
 
 (rf/reg-event-fx
  ::toggle-selection
@@ -40,7 +47,9 @@
    (let [f (if selected? conj disj)
          names (f selected name)]
      {:db (assoc db :branches-selected names)
-      ::fx/tauri [["commits" {:branches names}] ::commits/load-commits]})))
+      ::fx/tauri {:command "commits"
+                  :args {:branches names}
+                  :success ::commits/load-commits}})))
 
 (rf/reg-event-db
  ::toggle-expansion

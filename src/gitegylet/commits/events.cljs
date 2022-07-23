@@ -9,11 +9,10 @@
  (fn [db [_ head]]
    (assoc db :head (commit->map head))))
 
-(rf/reg-event-fx
+(rf/reg-event-db
  ::load-commits
- (fn [{:keys [db]} [_ commits]]
-   {:db (assoc db :commits (map commit->map commits))
-    ::fx/tauri [["head"] ::load-head]}))
+ (fn [db [_ commits]]
+   (assoc db :commits (map commit->map commits))))
 
 (rf/reg-event-db
  ::load-statuses
@@ -30,5 +29,6 @@
            id (:id new-selected)]
        (if (get-in db [:diff-files id])
          updated
-         (assoc updated ::fx/tauri [["commit_diff" {:id id}] ::load-statuses]))))))
-
+         (assoc updated ::fx/tauri {:command "commit_diff"
+                                    :args {:id id}
+                                    :success ::load-statuses}))))))

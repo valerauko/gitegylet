@@ -35,7 +35,11 @@
 
 (rf/reg-fx
  ::tauri
- (fn [[[command args] success failure]]
-   (-> (if args (invoke command (clj->js args)) (invoke command))
-       (.then #(rf/dispatch [(or success ::tauri-success) (js->clj %)]))
-       (.catch #(rf/dispatch [(or failure ::tauri-failure) (js->clj %)])))))
+ (fn handle [args]
+  (if (vector? args)
+    (doseq [arg args] (handle arg))
+    (let [{:keys [command args success failure]
+           :or {success ::tauri-success failure ::tauri-failure}} args]
+      (-> (if args (invoke command (clj->js args)) (invoke command))
+          (.then #(rf/dispatch [success (js->clj %)]))
+          (.catch #(rf/dispatch [failure (js->clj %)])))))))
