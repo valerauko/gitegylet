@@ -59,10 +59,12 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 800,
         "resizable": true,
         "title": "Gitegylet",
-        "width": 1000
+        "height": 800,
+        "width": 1400,
+        "minHeight": 800,
+        "minWidth": 1400
       }
     ]
   }
