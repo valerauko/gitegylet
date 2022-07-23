@@ -5,7 +5,6 @@
  :dependencies
  [[reagent "1.1.1"]
   [re-frame "1.2.0"]
-  [re-com "2.13.2"]
 
   [binaryage/devtools "1.0.6"]
   [day8/shadow-git-inject "0.0.5"]
