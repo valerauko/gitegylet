@@ -5,9 +5,9 @@
             [gitegylet.commits.db :refer [commit->map]]))
 
 (rf/reg-event-db
-  ::load-head
-  (fn [db [_ head]]
-    (assoc db :head (commit->map head))))
+ ::load-head
+ (fn [db [_ head]]
+   (assoc db :head (commit->map head))))
 
 (rf/reg-event-fx
  ::load-commits
@@ -23,12 +23,12 @@
              (map status->map statuses))))
 
 (rf/reg-event-fx
-  ::toggle-select
-  (fn [{{:keys [selected-commit] :as db} :db} [_ new-selected]]
-    (when-not (= selected-commit new-selected)
-      (let [updated {:db (assoc db :selected-commit new-selected)}
-            id (:id new-selected)]
-        (if (get-in db [:diff-files id])
-          updated
-          (assoc updated ::fx/tauri [["commit_diff" {:id id}] ::load-statuses]))))))
-       
+ ::toggle-select
+ (fn [{{:keys [selected-commit] :as db} :db} [_ new-selected]]
+   (when-not (= selected-commit new-selected)
+     (let [updated {:db (assoc db :selected-commit new-selected)}
+           id (:id new-selected)]
+       (if (get-in db [:diff-files id])
+         updated
+         (assoc updated ::fx/tauri [["commit_diff" {:id id}] ::load-statuses]))))))
+
