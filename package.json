@@ -11,16 +11,16 @@
     "clean": "rm -rf public/js target"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.0.4",
-		"shadow-cljs": "2.19.0",
+    "@tauri-apps/cli": "1.2.0",
+    "shadow-cljs": "2.19.0",
     "karma": "6.3.11",
     "karma-chrome-launcher": "3.1.0",
     "karma-cljs-test": "0.1.0",
     "karma-junit-reporter": "2.0.1"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.0.2",
-		"react": "17.0.2",
-		"react-dom": "17.0.2"
+    "@tauri-apps/api": "1.2.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
   }
 }
